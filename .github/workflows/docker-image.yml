@@ -1,25 +1,17 @@
-name: CI
+name: Team awesome's approval workflow
+on: pull_request_review
+jobs:
+  labelWhenApproved:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Label when approved
+      uses: pullreminders/label-when-approved-action@master
+      env:
+        APPROVALS: "1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ADD_LABEL: "approved"
 
-on:
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning'
-      tags:
-        description: 'Test scenario tags'
-
-
-# jobs:
-
-#   build:
-
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - uses: actions/checkout@v3
-#     - name: Build the Docker image
-#       run: docker build . --file Dockerfile --tag akpaul1991/app-backend:v.08
-#     - name: Log in to Docker Hub and push
-#       run: docker login -u akpaul1991 -p ${{ secrets.DOCKER_TOKEN }} && docker push akpaul1991/app-backend:v.08
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag akpaul1991/app-backend:v.08
+    - name: Log in to Docker Hub and push
+      run: docker login -u akpaul1991 -p ${{ secrets.DOCKER_TOKEN }} && docker push akpaul1991/app-backend:v.08
