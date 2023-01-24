@@ -1,17 +1,19 @@
-name: Team awesome's approval workflow
-on: pull_request_review
+name: Upload Website
+
+on:
+  push:
+    branches:
+    - main
+
 jobs:
-  labelWhenApproved:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Label when approved
-      uses: pullreminders/label-when-approved-action@master
+    - uses: actions/checkout@main
+    - uses: jakejarvis/s3-sync-action@main
+      with:
+        args: --acl public-read --follow-symlinks --delete --exclude '.git*/*'
       env:
-        APPROVALS: "1"
-        GITHUB_TOKEN: ${{ secrets. github_token }}
-        ADD_LABEL: "approved"
-
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag akpaul1991/app-backend:v.08
-    - name: Log in to Docker Hub and push
-      run: docker login -u akpaul1991 -p ${{ secrets.DOCKER_TOKEN }} && docker push akpaul1991/app-backend:v.08
+        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
