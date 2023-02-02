@@ -13,9 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: satackey/action-docker-layer-caching@v0.0.11
+      # Ignore the failure of a step and avoid terminating the job.
+      continue-on-error: true
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag akpaul1991/app-backend:v.02
     - name: Log in to Docker Hub and push
       run: docker login -u akpaul1991 -p ${{ secrets.DOCKER_TOKEN }} && docker push akpaul1991/app-backend:v.02
-       
